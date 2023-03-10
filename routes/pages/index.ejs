@@ -1,0 +1,49 @@
+<%- include('./components/Dashboard/head.ejs')  %>
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+                <div class="page-header">
+                    <nav class="breadcrumb-one" aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
+                        </ol>
+                    </nav>
+                </div>
+                <br>
+                <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
+    <div class="row widget-statistic">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 layout-spacing">
+            <div class="widget widget-one_hybrid widget-referral">
+                <div class="widget-heading">
+                    <div class="w-title">
+                        <div>
+                            <p class="w-value">Monitoring</p>
+                            <h5>
+                                <%=services[0].name %> :: <%=services[0].url %></br>
+                                <%=services[1].name %> :: <%=services[1].url %></br>
+                                <%=services[2].name %> :: <%=services[2].url %></br>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                <!-- <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+                    <div class="widget widget-chart-three">
+                        <div class="widget-heading">
+                            <div class="">
+                                <h5 class="">Discord Control </h5>
+                            </div>
+                        </div>
+    
+                        <div class="widget-content">
+                            <iframe src="https://e.widgetbot.io/channels/796048327024050176/824326273811218482" height="450" width="100%"></iframe>        </div>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+                <%- include('./components/Dashboard/foot.ejs', { user}) %>
+            </div>
