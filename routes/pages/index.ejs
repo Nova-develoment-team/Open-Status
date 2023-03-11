@@ -19,7 +19,7 @@
                         <div>
                             <p class="w-value">Monitoring</p>
                             <h5>
-                            <% services.forEach((element) => { %>
+                            <% services.forEach(function (element) { %>
   <%= element.id %> :: <%= element.value %>
 <% }) %>
                             </h5>

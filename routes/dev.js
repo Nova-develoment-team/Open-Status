@@ -39,6 +39,9 @@ router.get('/login', (req, res) => {
   });
   req.session.state = state;
   req.session.redirect = req.query.redirect
+  if (!req.query.redirect){
+    req.session.redirect = "/dev"
+  }
   res.redirect(url);
 });
 
@@ -88,7 +91,7 @@ res.render(__dirname+'/pages/index.ejs', {
      res.redirect('/') 
     }
     }else{
-     res.redirect('/dev/login') 
+     res.redirect('/dev/login?redirect=') 
     }
   } catch (error) {
     console.error(error);
@@ -120,8 +123,20 @@ res.render(__dirname+'/pages/new.ejs', {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error getting data');
-  }0
+  }
 });
+
+router.get('/auth/logout', async (req, res) => {
+   req.session.destroy(function(err) {
+      if (err) {
+        console.log(err);
+      } // cannot access session here
+      else {
+        console.log("Logged Out");
+      }
+    });
+  res.redirect('/')
+})
 
 
 module.exports = router;
