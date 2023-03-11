@@ -3,6 +3,8 @@ const session = require('express-session');
 const config = require('../config');
 const crypto = require('crypto');
 const DiscordOauth2 = require('discord-oauth2');
+const { QuickDB } = require('quick.db')
+const db = new QuickDB({ filePath: "./data/db/monitoring.sqlite" })
 
 // Util
 function removehttp(string) {
@@ -18,7 +20,7 @@ function removehttp(string) {
 const oauth = new DiscordOauth2({
   clientId: config.discord.clientId,
   clientSecret: config.discord.clientSecret,
-  redirectUri: config.discord.domain + '/dev/callback',
+  redirectUri: config.settings.domain + '/dev/callback',
 });
 
 const router = express.Router();
@@ -36,6 +38,7 @@ router.get('/login', (req, res) => {
     state,
   });
   req.session.state = state;
+  req.session.redirect = req.query.redirect
   res.redirect(url);
 });
 
@@ -45,6 +48,9 @@ router.get('/callback', async (req, res) => {
     res.status(403).send('Invalid state parameter');
     return;
   }
+    if (!req.session.redirect) {
+    res.redirect('/');;
+  }
   try {
     const tokenData = await oauth.tokenRequest({
       code,
@@ -53,7 +59,7 @@ router.get('/callback', async (req, res) => {
     });
     req.session.accessToken = tokenData.access_token;
     req.session.refreshToken = tokenData.refresh_token;
-    res.redirect('/dev');
+    res.redirect(req.session.redirect)
   } catch (error) {
     console.error(error);
     res.status(500).send('Error getting token');
@@ -63,17 +69,25 @@ router.get('/callback', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    var services = config.services
+ services = db.all()
+if (!db.all()[0]) {
+  services = [{ name: "example", url: "https://example.com"}]
+}
+
     if (req.session.accessToken) {
+          if (oauth.getUser(req.session.accessToken).id !== config.discord.ownerId) {
     const user = await oauth.getUser(req.session.accessToken);
 res.render(__dirname+'/pages/index.ejs', {
   title: "Home",
   user,
   req,
   res,
-  services,
+  services
 })
     } else {
+     res.redirect('/') 
+    }
+    }else{
      res.redirect('/dev/login') 
     }
   } catch (error) {
@@ -81,5 +95,33 @@ res.render(__dirname+'/pages/index.ejs', {
     res.status(500).send('Error getting data');
   }
 });
+var appkey = config.settings.api_key || "hotdog"
+
+router.get('/new', async (req, res) => {
+  try {
+
+    if (req.session.accessToken) {
+          if (oauth.getUser(req.session.accessToken).id !== config.discord.ownerId) {
+    const user = await oauth.getUser(req.session.accessToken);
+res.render(__dirname+'/pages/new.ejs', {
+  title: "Home",
+  user,
+  req,
+  res,
+  config,
+  appkey
+})
+    } else {
+     res.redirect('/') 
+    }
+    }else{
+     res.redirect(`/dev/login?redirect=new`) 
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error getting data');
+  }0
+});
+
 
 module.exports = router;

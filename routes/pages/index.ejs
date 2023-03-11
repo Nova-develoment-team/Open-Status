@@ -19,9 +19,9 @@
                         <div>
                             <p class="w-value">Monitoring</p>
                             <h5>
-                                <%=services[0].name %> :: <%=services[0].url %></br>
-                                <%=services[1].name %> :: <%=services[1].url %></br>
-                                <%=services[2].name %> :: <%=services[2].url %></br>
+                            <% services.forEach((element) => { %>
+  <%= element.id %> :: <%= element.value %>
+<% }) %>
                             </h5>
                         </div>
                     </div>
